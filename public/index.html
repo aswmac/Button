@@ -1,27 +1,74 @@
 <!DOCTYPE html>
-	<html lang="en">
+<html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Notification App</title>
-                <link rel="stylesheet" href="styles.css">
-		<script src="/socket.io/socket.io.js"></script>
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				const socket = io();
-
-				document.getElementById('requestButton').addEventListener('click', () => {
-					socket.emit('sendRequest');
-					alert('Request sent!');
-				});
-				
-				socket.on('notification', (message) => {
-					// This event will only be triggered on the admin's browser
-					alert(message);
-				});
-			});
-		</script>
-	</head>
+			<title>Notification App</title>
+			<link rel="stylesheet" href="styles.css">
+				<script src="/socket.io/socket.io.js"></script>
+				<script>
+					document.addEventListener('DOMContentLoaded', () => {
+						const socket = io();
+						
+						document.getElementById('requestButton').addEventListener('click', () => {
+							socket.emit('sendRequest');
+							alert('Request sent!');
+						});
+						
+						socket.on('notification', (message) => {
+							// This event will only be triggered on the admin's browser
+							alert(message);
+						});
+					});
+				</script>
+			</head>
 	<body>
+		<div id="svgContainer">
+			<!-- SVG will be injected here -->
+		</div>
+		<script>
+			const ws = new WebSocket('ws://localhost:3000');
+			
+			let svgElement;
+			
+			ws.onmessage = function(event) {
+				const data = JSON.parse(event.data);
+				if (data.type === 'initialSVG') {
+					// Create SVG element
+					svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+					svgElement.innerHTML = data.data;
+					document.getElementById('svgContainer').appendChild(svgElement);
+				} else if (data.type === 'svgDiff') {
+					applyDiff(svgElement, data.data);
+				}
+			};
+			
+			function applyDiff(svg, diff) {
+				let newHTML = svg.innerHTML;
+				
+				for (const part of diff) {
+					if (part.added) {
+						// Append added content
+						newHTML += part.value;
+					} else if (part.removed) {
+						// Replace removed content (simple approach)
+						newHTML = newHTML.replace(part.value, '');
+					}
+				}
+				
+				svg.innerHTML = newHTML;
+			}
+			
+			// Simulate admin update after 5 seconds for testing
+			setTimeout(() => {
+				const newSVG = `
+<svg width="800" height="600">
+ <rect width="100%" height="100%" fill="white"/>
+ <line x1="0" y1="0" x2="800" y2="600" stroke="black"/>
+</svg>
+`;
+ws.send(JSON.stringify({ type: 'adminUpdate', svg: newSVG }));
+			}, 5000);
+		</script>
 		
 		<div class="center">
 			<center><h1>Request Some Attention</h1></center>
@@ -41,9 +88,9 @@
 			</span>
 			<p>
 			<center>
-			<a href="whiteboard.svg">WhiteBoard</a>
+				<a href="whiteboard.svg">WhiteBoard</a>
 			</center>
 		</div>
 		
 	</body>
-	</html>
+</html>
