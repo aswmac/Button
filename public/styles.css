@@ -1,0 +1,37 @@
+/* styles.css */
+a {
+	color: white;
+}
+a:visited {
+	color: grey;
+}
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #172200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.center {
+	margin: auto;
+	width: 100%;
+	border: 3px solid #73AD21;
+	round: 3px;
+	padding: 10px;
+}
+.center span {
+	display: block; /* or use inline-block if you need to preserve some inline properites */
+}
+.splash {
+  animation: fadeOut 1.5s ease-out 2s forwards;
+  transition: opacity 0.5s ease-in-out;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
