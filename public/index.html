@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Notification App</title>
+                <link rel="stylesheet" href="styles.css">
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const socket = io();
+
+				document.getElementById('requestButton').addEventListener('click', () => {
+					socket.emit('sendRequest');
+					alert('Request sent!');
+				});
+				
+				socket.on('notification', (message) => {
+					// This event will only be triggered on the admin's browser
+					alert(message);
+				});
+			});
+		</script>
+								</head>
+	<body>
+		
+		<div class="center">
+			<center><h1>Request Some Attention</h1></center>
+			<center>
+				<button id="requestButton">Send Notification</button>
+			</center>
+			<p>
+			<span>
+				<iframe width="560" height="315"
+					// my youtube chanel, the video of the fox at sac
+					src="https://www.youtube.com/embed/ZInxd8SHp48"
+					title="YouTube video player"
+					frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+					allowfullscreen>
+				</iframe>
+			</span>
+			<p>
+			<center>
+			<a href="whiteboard.svg">WhiteBoard</a>
+			</center>
+		</div>
+		
+	</body>
+	</html>
